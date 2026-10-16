@@ -39,6 +39,9 @@ jobs:
           sudo snap install --dangerous ${{ steps.build-snap.outputs.snap }}
           snap run markitdown --version
 
+      - name: Test
+        run: python3 tests/smoke.py
+
       - name: Publish to Beta
         uses: canonical/action-publish@v1
         env:

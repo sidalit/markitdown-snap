@@ -23,6 +23,16 @@ markitdown ~/Documents/report.pdf -o ~/Documents/report.md
 printf '<h1>Hello</h1>' | markitdown -x html
 ```
 
+## Test
+
+After installing the snap, run the tests as a normal user:
+
+```bash
+python3 tests/smoke.py
+```
+
+They convert the sample files in `tests/fixtures` (copied from upstream) and check that FFmpeg and ExifTool start. They do not need network access.
+
 ## Known limitations
 
 ### Only amd64 and arm64

@@ -1,0 +1,1 @@
+Fixtures copied unchanged from microsoft/markitdown tag v0.1.8 (commit b8f79c57ebc0044be41323d89b2a45d3fda8460e), packages/markitdown/tests/test_files/. Covered by the accompanying upstream MIT LICENSE.
