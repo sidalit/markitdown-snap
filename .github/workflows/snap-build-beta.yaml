@@ -1,0 +1,48 @@
+name: Beta Snap Build
+
+on:
+  push:
+    branches: [main]
+    paths: ['snap/snapcraft.yaml']
+  workflow_dispatch:
+
+jobs:
+  build_snap:
+    name: Build beta MarkItDown snap (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build snap
+        uses: canonical/action-build@v1
+        id: build-snap
+        with:
+          build-info: true
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: markitdown-snap-${{ matrix.arch }}
+          path: ${{ steps.build-snap.outputs.snap }}
+
+      - name: Smoke test
+        run: |
+          sudo snap install --dangerous ${{ steps.build-snap.outputs.snap }}
+          snap run markitdown --version
+
+      - name: Publish to Beta
+        uses: canonical/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        with:
+          snap: ${{ steps.build-snap.outputs.snap }}
+          release: beta

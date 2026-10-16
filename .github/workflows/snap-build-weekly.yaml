@@ -1,0 +1,56 @@
+name: Weekly Snap Build
+
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+jobs:
+  build_snap:
+    name: Build weekly MarkItDown snap (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use latest markitdown commit
+        run: |
+          sha=$(git ls-remote https://github.com/microsoft/markitdown.git refs/heads/main | cut -f1)
+          sed -i \
+            -e "s/^version: '\(.*\)'/version: '\1-${sha:0:7}'/" \
+            -e "s/^grade: .*/grade: devel/" \
+            -e "s/source-tag: .*/source-commit: '${sha}'/" \
+            snap/snapcraft.yaml
+
+      - name: Build snap
+        uses: canonical/action-build@v1
+        id: build-snap
+        with:
+          build-info: true
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: markitdown-snap-${{ matrix.arch }}
+          path: ${{ steps.build-snap.outputs.snap }}
+
+      - name: Smoke test
+        run: |
+          sudo snap install --dangerous ${{ steps.build-snap.outputs.snap }}
+          snap run markitdown --version
+
+      - name: Publish to Edge
+        uses: canonical/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        with:
+          snap: ${{ steps.build-snap.outputs.snap }}
+          release: edge
