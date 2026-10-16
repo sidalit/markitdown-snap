@@ -1,0 +1,75 @@
+name: markitdown
+base: core26
+version: '0.1.8'
+title: MarkItDown
+summary: Convert PDF, Office documents, images and audio to Markdown
+description: |
+  MarkItDown converts PDF, Word, Excel, PowerPoint, HTML, images, audio and
+  other files to Markdown, ready to use with text tools and language models.
+
+  **Examples**
+
+     markitdown ./report.pdf -o ./report.md
+     markitdown ./slides.pptx
+     cat ./page.html | markitdown -x html
+
+  **File access**
+
+  MarkItDown can use files in your home directory. To also use USB drives
+  and other removable media (/media, /mnt), run:
+
+     sudo snap connect markitdown:removable-media
+license: MIT
+grade: stable
+confinement: strict
+website: https://github.com/microsoft/markitdown
+source-code: https://github.com/microsoft/markitdown
+issues: https://github.com/microsoft/markitdown/issues
+contact: https://github.com/sidalit/markitdown-snap/issues
+
+platforms:
+  amd64:
+  arm64:
+
+apps:
+  markitdown:
+    command: bin/markitdown
+    plugs:
+      - home
+      - removable-media
+      - network
+    environment:
+      # snapd puts $SNAP/usr/bin first, which would run the system Python
+      # instead of the virtual environment's.
+      PATH: $SNAP/bin:$SNAP/usr/bin:$PATH
+      EXIFTOOL_PATH: $SNAP/bin/markitdown-exiftool
+
+parts:
+  markitdown:
+    plugin: python
+    source: https://github.com/microsoft/markitdown.git
+    source-tag: 'v0.1.8'
+    source-subdir: packages/markitdown
+    python-packages:
+      - '.[all]'
+    stage-packages:
+      - python3-venv
+      - ffmpeg
+      - flac
+      - libimage-exiftool-perl
+    override-build: |
+      craftctl default
+      install -Dm644 "$CRAFT_PART_SRC/LICENSE" "$CRAFT_PART_INSTALL/share/doc/markitdown/LICENSE"
+      install -Dm644 "$CRAFT_PART_SRC/packages/markitdown/ThirdPartyNotices.md" "$CRAFT_PART_INSTALL/share/doc/markitdown/ThirdPartyNotices.md"
+    # FFmpeg links to private PulseAudio libraries outside the default search path.
+    override-prime: |
+      craftctl default
+      for library in "$CRAFT_PRIME/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pulseaudio/"*.so; do
+        test -f "$library" || continue
+        ln -sf "pulseaudio/$(basename "$library")" "$CRAFT_PRIME/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/$(basename "$library")"
+      done
+
+  # core26 has no Perl, so ExifTool runs through the staged one.
+  exiftool-wrapper:
+    plugin: dump
+    source: snap/local
