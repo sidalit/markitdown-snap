@@ -19,7 +19,7 @@ on:
 
 jobs:
   snap:
-    uses: sidalit/snap-automation/.github/workflows/snap-build.yaml@v1.0.1
+    uses: sidalit/snap-automation/.github/workflows/snap-build.yaml@v1.0.4
     with:
       build-from: ${{ github.event_name == 'schedule' && 'head' || inputs.build-from || 'tag' }}
       channel: >-
