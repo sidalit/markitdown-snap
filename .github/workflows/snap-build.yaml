@@ -13,18 +13,16 @@ on:
         type: choice
         options: [tag, head]
         default: tag
-      channel:
-        description: Store channel (leave empty to build only)
-        type: string
+      publish:
+        description: Publish to the Snap Store
+        type: boolean
+        default: false
 
 jobs:
   snap:
-    uses: sidalit/snap-automation/.github/workflows/snap-build.yaml@v1.0.4
+    uses: sidalit/snap-automation/.github/workflows/snap-build.yaml@v1.1.0
     with:
       build-from: ${{ github.event_name == 'schedule' && 'head' || inputs.build-from || 'tag' }}
-      channel: >-
-        ${{ github.event_name == 'schedule' && 'edge'
-            || github.event_name == 'push' && 'beta'
-            || inputs.channel }}
+      publish: ${{ github.event_name == 'push' || github.event_name == 'schedule' || inputs.publish == true }}
     secrets:
       SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}

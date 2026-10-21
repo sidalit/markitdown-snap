@@ -1,6 +1,6 @@
 name: markitdown
 base: core26
-adopt-info: markitdown
+version: '0.1.8'
 title: MarkItDown
 summary: Convert PDF, Office documents, images and audio to Markdown
 description: |
@@ -48,8 +48,7 @@ parts:
   markitdown:
     plugin: python
     source: https://github.com/microsoft/markitdown.git
-    # renovate: depName=microsoft/markitdown
-    source-tag: 'v0.1.8'
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION
     source-subdir: packages/markitdown
     python-packages:
       - '.[all]'
@@ -58,9 +57,6 @@ parts:
       - ffmpeg
       - flac
       - libimage-exiftool-perl
-    override-pull: |
-      craftctl default
-      craftctl set version="$(git -C "$CRAFT_PART_SRC" describe --tags --match 'v[0-9]*' | sed 's/^v//')"
     override-build: |
       craftctl default
       install -Dm644 "$CRAFT_PART_SRC/LICENSE" "$CRAFT_PART_INSTALL/share/doc/markitdown/LICENSE"
