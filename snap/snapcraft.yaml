@@ -23,8 +23,12 @@ license: MIT
 grade: stable
 confinement: strict
 website: https://github.com/microsoft/markitdown
-source-code: https://github.com/microsoft/markitdown
-issues: https://github.com/microsoft/markitdown/issues
+source-code:
+  - https://github.com/microsoft/markitdown
+  - https://github.com/sidalit/markitdown-snap
+issues:
+  - https://github.com/microsoft/markitdown/issues
+  - https://github.com/sidalit/markitdown-snap/issues
 contact: https://github.com/sidalit/markitdown-snap/issues
 
 platforms:
