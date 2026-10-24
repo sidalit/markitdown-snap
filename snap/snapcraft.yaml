@@ -1,6 +1,6 @@
 name: markitdown
 base: core26
-version: '0.1.8'
+version: '0.1.9'
 title: MarkItDown
 summary: Convert PDF, Office documents, images and audio to Markdown
 description: |
