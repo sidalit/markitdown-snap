@@ -65,6 +65,10 @@ parts:
       craftctl default
       install -Dm644 "$CRAFT_PART_SRC/LICENSE" "$CRAFT_PART_INSTALL/share/doc/markitdown/LICENSE"
       install -Dm644 "$CRAFT_PART_SRC/packages/markitdown/ThirdPartyNotices.md" "$CRAFT_PART_INSTALL/share/doc/markitdown/ThirdPartyNotices.md"
+    prime:
+      - -lib/python3.*/site-packages/pandas/tests
+      - -lib/python3.*/site-packages/numpy/**/tests
+      - -lib/python3.*/site-packages/youtube_transcript_api/test
     # FFmpeg links to private PulseAudio libraries outside the default search path.
     override-prime: |
       craftctl default
