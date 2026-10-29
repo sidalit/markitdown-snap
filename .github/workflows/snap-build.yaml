@@ -20,7 +20,7 @@ on:
 
 jobs:
   snap:
-    uses: sidalit/snap-automation/.github/workflows/snap-build.yaml@v1.1.0
+    uses: sidalit/snap-automation/.github/workflows/snap-build.yaml@v1.2.0
     with:
       build-from: ${{ github.event_name == 'schedule' && 'head' || inputs.build-from || 'tag' }}
       publish: ${{ github.event_name == 'push' || github.event_name == 'schedule' || inputs.publish == true }}
