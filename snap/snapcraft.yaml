@@ -47,6 +47,7 @@ apps:
       # instead of the virtual environment's.
       PATH: $SNAP/bin:$SNAP/usr/bin:$PATH
       EXIFTOOL_PATH: $SNAP/bin/markitdown-exiftool
+      XDG_CACHE_HOME: $SNAP_USER_COMMON/.cache
 
 parts:
   markitdown:
